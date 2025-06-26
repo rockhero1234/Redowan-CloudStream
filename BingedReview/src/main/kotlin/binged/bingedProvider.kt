@@ -120,7 +120,7 @@ class BingedProvider : MainAPI() {
                 url = entry["link"].toString(),
                 type = TvType.Movie
             ) {
-                this.posterUrl = entry["big-image"].toString()
+                this.posterUrl = entry["small-image"].toString()
                 //this.plot = entry["review"].toString()
             }
         } ?: emptyList()
@@ -133,7 +133,11 @@ class BingedProvider : MainAPI() {
         val dt = doc.select("div.single-mevents-meta").text()
         val dtsplit = dt.split("|")
         val imageUrl = doc.select("meta")[15].attr("content").toString()
-        val trailer = doc.select("div.bng-section__content")[1].select("a").attr("href").toString()
+        val trailer = doc.select("div.bng-section__content")
+    .getOrNull(1)
+    ?.selectFirst("a")
+    ?.attr("href")
+    .orEmpty()
         val tags = listOf(
             doc.select("span.single-mevents-platforms-row-date").text().toString(),
             doc.select("span.rating-span").first().text().toString(),
