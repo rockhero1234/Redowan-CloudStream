@@ -29,7 +29,7 @@ class BingedProvider : MainAPI() {
                 "action" to "mi_events_load_data",
                 "mode" to titled,
                 "start" to "$j",
-                "length" to "$i",
+                "length" to "10",
                 "customcatalog" to "0"
             ),
             headers = mapOf(
