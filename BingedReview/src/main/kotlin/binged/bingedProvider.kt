@@ -130,7 +130,7 @@ class BingedProvider : MainAPI() {
             dtsplit.getOrNull(3)
         )
 
-        return newMovieLoadResponse(title, url, TvType.Movie, ' ') {
+        return newMovieLoadResponse(title, url, TvType.Movie, null) {
             this.posterUrl = imageUrl
             this.year = year
             this.plot = plot
