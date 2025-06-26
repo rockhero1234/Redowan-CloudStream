@@ -57,7 +57,7 @@ class BingedProvider : MainAPI() {
                 url = entry["link"].toString(),
                 type = TvType.Movie
             ) {
-                this.posterUrl = entry["small-image"].toString()
+                this.posterUrl = entry["big-image"].toString()
             }
         } ?: emptyList()
     }
