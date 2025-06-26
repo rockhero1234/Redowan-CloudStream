@@ -24,7 +24,7 @@ class BingedProvider : MainAPI() {
                 "filters[recommend]" to "false",
                 "filters[date-from]" to "",
                 "filters[date-to]" to "",
-                "filters[mode]" to "streaming-soon",
+                "filters[mode]" to titled,
                 "filters[page]" to "0",
                 "action" to "mi_events_load_data",
                 "mode" to titled,
@@ -57,7 +57,7 @@ class BingedProvider : MainAPI() {
                 url = entry["link"].toString(),
                 type = TvType.Movie
             ) {
-                this.posterUrl = entry["image"].toString()
+                this.posterUrl = entry["big-image"].toString()
             }
         } ?: emptyList()
     }
@@ -108,7 +108,7 @@ class BingedProvider : MainAPI() {
                 url = entry["link"].toString(),
                 type = TvType.Movie
             ) {
-                this.posterUrl = entry["image"].toString()
+                this.posterUrl = entry["big-image"].toString()
             }
         } ?: emptyList()
     }
