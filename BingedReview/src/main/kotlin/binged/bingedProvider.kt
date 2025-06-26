@@ -20,12 +20,10 @@ class BingedProvider : MainAPI() {
         val response = app.post(
             "$mainUrl/wp-admin/admin-ajax.php",
             data = mapOf(
-                "filters[search]" to "",
                 "filters[recommend]" to "false",
                 "filters[date-from]" to "",
                 "filters[date-to]" to "",
                 "filters[mode]" to titled,
-                "filters[page]" to "0",
                 "action" to "mi_events_load_data",
                 "mode" to titled,
                 "start" to "$j",
@@ -65,14 +63,12 @@ class BingedProvider : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val stsoon = getData("streaming-soon", page * 10)
         val stnow = getData("streaming-now", page * 10)
-        val netflix = getData("streaming-now", page * 10, "netflix.webp")
-        val amazon = getData("streaming-now", page * 10, "amazon")
+
         return newHomePageResponse(
             listOf(
                 HomePageList("Streaming Soon", stsoon, false),
                 HomePageList("Streaming Now", stnow, false),
-                HomePageList("Netflix", netflix, false),
-                HomePageList("Prime", amazon, false)
+                
             ), true
         )
     }
