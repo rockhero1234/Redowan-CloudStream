@@ -16,7 +16,7 @@ class BingedProvider : MainAPI() {
     override val hasMainPage = true
 
     private suspend fun getData(titled: String, i: Int, fltr: String = ""): List<MovieSearchResponse> {
-        val j = (i % 10) * 10 + 1
+        val j = (i / 10 -1) * 10 + 1
         val response = app.post(
             "$mainUrl/wp-admin/admin-ajax.php",
             data = mapOf(
