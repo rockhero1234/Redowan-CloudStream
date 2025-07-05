@@ -128,8 +128,8 @@ class BingedProvider : MainAPI() {
         val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
         val actors = doc.select("div.single-castItem").mapNotNull{
             Actor(
-                it.selectFirst("div.single-castItem-name").text(),
-                it.selectFirst("div.single-castItem-image").extractimg()
+                it.selectFirst("div.single-castItem-name")?.text(),
+                it.selectFirst("div.single-castItem-image")?.extractimg()
             )
         }
         val tags = listOfNotNull(
