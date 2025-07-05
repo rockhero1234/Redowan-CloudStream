@@ -111,10 +111,10 @@ class BingedProvider : MainAPI() {
             }
         } ?: emptyList()
     }
-
+    
 fun String.extractimg(): String? {
     val regex = Regex("url\\((\"?)(.*?)\\1\\)")
-    return)?.groupValues?.getOrNull(2)
+    return regex.find(this)?.groupValues?.getOrNull(2)
 }
 
 override suspend fun load(url: String): LoadResponse? {
