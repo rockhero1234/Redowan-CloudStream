@@ -129,13 +129,17 @@ override suspend fun load(url: String): LoadResponse? {
     val plot = doc.selectFirst("p")?.text().orEmpty()
     val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
 
-    val actors = doc.select("div.single-castItem").mapNotNull {
-        val name = it.selectFirst("div.single-castItem-name")?.text() ?: return@mapNotNull null
-        val style = it.selectFirst("div.single-castItem-image")?.attr("style") ?: return@mapNotNull null
-        val img = style.extractimg() ?: return@mapNotNull null
+    val actors = doc.select("div.single-castItem").map {
+    val name = it.selectFirst("div.single-castItem-name")?.text()
+    val style = it.selectFirst("div.single-castItem-image")?.attr("style")
+    val img = style?.extractimg()
+    if (name != null && img != null) {
         Actor(name, img)
+    } else {
+        null
     }
-
+}.filterNotNull()
+    
     val tags = listOfNotNull(
         doc.selectFirst("span.single-mevents-platforms-row-date")?.text(),
         doc.selectFirst("div.our-rating > span.rating-span")?.text() ?: "No Review",
