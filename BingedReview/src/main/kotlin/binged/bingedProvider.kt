@@ -17,7 +17,7 @@ class BingedProvider : MainAPI() {
 
     private suspend fun getData(titled: String, i: Int, fltr: String = ""): List<MovieSearchResponse> {
         val j = if (i == 1) 0 else 21 + (i - 2) * 20
-        var data = mapOf(
+        var data = mutableMapOf(
                 "filters[recommend]" to "false",
                 "filters[date-from]" to "",
                 "filters[date-to]" to "",
@@ -29,7 +29,7 @@ class BingedProvider : MainAPI() {
                 "customcatalog" to "0"
         )
        if(fltr.isNotEmpty()){
-            data["filters[platform][]"] = fltr.joinToString(",")
+            data["filters[platform][]"] = fltr
        }
 
         val response = app.post(
