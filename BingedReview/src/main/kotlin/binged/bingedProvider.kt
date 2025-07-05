@@ -16,7 +16,7 @@ class BingedProvider : MainAPI() {
     override val hasMainPage = true
 
     private suspend fun getData(titled: String, i: Int, fltr: String = ""): List<MovieSearchResponse> {
-        val j = (i / 10 -1) * 10 + 1
+        val j = if (i == 1) 0 else 21 + (i - 2) * 20
         val response = app.post(
             "$mainUrl/wp-admin/admin-ajax.php",
             data = mapOf(
@@ -27,7 +27,7 @@ class BingedProvider : MainAPI() {
                 "action" to "mi_events_load_data",
                 "mode" to titled,
                 "start" to "$j",
-                "length" to "10",
+                "length" to "20",
                 "customcatalog" to "0"
             ),
             headers = mapOf(
@@ -61,8 +61,8 @@ class BingedProvider : MainAPI() {
     }
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val stsoon = getData("streaming-soon", page * 10)
-        val stnow = getData("streaming-now", page * 10)
+        val stsoon = getData("streaming-soon", page)
+        val stnow = getData("streaming-now", page)
 
         return newHomePageResponse(
             listOf(
