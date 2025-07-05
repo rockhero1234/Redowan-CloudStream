@@ -112,7 +112,7 @@ class BingedProvider : MainAPI() {
         } ?: emptyList()
     }
     
-    fun String.extractimg(): String? {
+    fun String.extractimg(): String {
     val regex = Regex("url\\((\"?)(.*?)\\1\\)")
     return regex.find(this)?.groupValues?.get(2)
     }
