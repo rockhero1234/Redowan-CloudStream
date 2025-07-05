@@ -29,8 +29,9 @@ class BingedProvider : MainAPI() {
                 "customcatalog" to "0"
         )
        if(fltr.isNotEmpty()){
-            data["filters[platform][]"] = fltr
-        }
+            data["filters[platform][]"] = fltr.joinToString(",")
+       }
+
         val response = app.post(
             "$mainUrl/wp-admin/admin-ajax.php",
             data = data,
