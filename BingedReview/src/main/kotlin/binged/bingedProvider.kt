@@ -17,9 +17,7 @@ class BingedProvider : MainAPI() {
 
     private suspend fun getData(titled: String, i: Int, fltr: String = ""): List<MovieSearchResponse> {
         val j = if (i == 1) 0 else 21 + (i - 2) * 20
-        val response = app.post(
-            "$mainUrl/wp-admin/admin-ajax.php",
-            data = mapOf(
+        var data = mapOf(
                 "filters[recommend]" to "false",
                 "filters[date-from]" to "",
                 "filters[date-to]" to "",
@@ -29,7 +27,13 @@ class BingedProvider : MainAPI() {
                 "start" to "$j",
                 "length" to "20",
                 "customcatalog" to "0"
-            ),
+        ),
+       if(fltr.isNotEmpty()){
+            data["filters[platform][]"] = fltr
+        }
+        val response = app.post(
+            "$mainUrl/wp-admin/admin-ajax.php",
+            data = data,
             headers = mapOf(
                 "Content-Type" to "application/x-www-form-urlencoded; charset=UTF-8",
                 "Accept" to "*/*",
@@ -41,13 +45,6 @@ class BingedProvider : MainAPI() {
 
         val json = tryParseJson<Map<String, Any>>(response)
         var dataList = json?.get("data") as? List<Map<String, Any>>
-
-        if (fltr.isNotEmpty()) {
-            dataList = dataList?.filter { entry ->
-                val platforms = entry["platform"] as? List<String>
-                platforms?.any { it.contains(fltr, ignoreCase = true) } == true
-            }
-        }
 
         return dataList?.map { entry ->
             newMovieSearchResponse(
@@ -63,12 +60,16 @@ class BingedProvider : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
         val stsoon = getData("streaming-soon", page)
         val stnow = getData("streaming-now", page)
-
+        val nt = getData("streaming-now", page,"Netflix")
+        val prime = getData("streaming-now", page,"Amazon")
+        val jioh = getData("streaming-now", page,"Jio Hotstar")
         return newHomePageResponse(
             listOf(
                 HomePageList("Streaming Soon", stsoon, false),
                 HomePageList("Streaming Now", stnow, false),
-                
+                HomePageList("Netflix", nt, false),
+                HomePageList("PrimeVideo", prime, false),
+                HomePageList("Hotstar", jioh, false),
             ), true
         )
     }
