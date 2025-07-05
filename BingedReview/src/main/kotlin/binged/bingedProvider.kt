@@ -27,7 +27,7 @@ class BingedProvider : MainAPI() {
                 "start" to "$j",
                 "length" to "20",
                 "customcatalog" to "0"
-        ),
+        )
        if(fltr.isNotEmpty()){
             data["filters[platform][]"] = fltr
         }
