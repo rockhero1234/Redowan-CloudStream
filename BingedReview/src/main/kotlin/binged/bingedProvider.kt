@@ -114,7 +114,7 @@ class BingedProvider : MainAPI() {
     
     fun String.extractimg(): String {
     val regex = Regex("url\\((\"?)(.*?)\\1\\)")
-    return regex.find(this)?.groupValues?.get(2)
+    return regex.find(this).groupValues.get(2)
     }
     override suspend fun load(url: String): LoadResponse? {
         val doc = app.get(url, cacheTime = 60).document
@@ -128,8 +128,8 @@ class BingedProvider : MainAPI() {
         val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
         val actors = doc.select("div.single-castItem").mapNotNull{
             Actor(
-                it.selectFirst("div.single-castItem-name")?.text(),
-                it.selectFirst("div.single-castItem-image")?.extractimg()
+                it.selectFirst("div.single-castItem-name").text(),
+                it.selectFirst("div.single-castItem-image").extractimg()
             )
         }
         val tags = listOfNotNull(
