@@ -8,7 +8,8 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import java.net.URLEncoder
-import kotlinx.serialization.json.*
+import org.json.JSONArray
+import org.jsoup.nodes.Element
 
 class BingedProvider : MainAPI() {
     override var mainUrl = "https://www.binged.com"
@@ -113,12 +114,13 @@ class BingedProvider : MainAPI() {
         } ?: emptyList()
     }
 
+
 fun Element.extractimg(): String? {
-    val dataBgRaw = this.attr("data-bg")
+    val raw = this.attr("data-bg")
     return try {
-        val jsonArray = Json.parseToJsonElement(dataBgRaw).jsonArray
-        val firstItem = jsonArray.firstOrNull() ?: return null
-        firstItem.jsonObject["url"]?.jsonPrimitive?.content
+        val jsonArray = JSONArray(raw)
+        val firstObj = jsonArray.optJSONObject(0)
+        firstObj?.optString("url")
     } catch (e: Exception) {
         null
     }
