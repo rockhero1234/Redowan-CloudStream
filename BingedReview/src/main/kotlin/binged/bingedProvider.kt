@@ -111,47 +111,50 @@ class BingedProvider : MainAPI() {
             }
         } ?: emptyList()
     }
-    
-    fun String.extractimg(): String {
+
+fun String.extractimg(): String? {
     val regex = Regex("url\\((\"?)(.*?)\\1\\)")
-    return regex.find(this).groupValues.get(2)
-    }
-    override suspend fun load(url: String): LoadResponse? {
-        val doc = app.get(url, cacheTime = 60).document
-        val title = doc.selectFirst("h1")?.text().orEmpty()
-        val dt = doc.select("div.single-mevents-meta").text()
-        val dtsplit = dt.split("|")
-        val imageUrl = doc.selectFirst("meta[property=og:image]")?.attr("content").orEmpty()
-        val trailer = doc.select("div.bng-section__content").getOrNull(1)
-            ?.selectFirst("a")?.attr("href").orEmpty()
-        val plot = doc.selectFirst("p")?.text().orEmpty()
-        val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
-        val actors = doc.select("div.single-castItem").mapNotNull{
-            Actor(
-                it.selectFirst("div.single-castItem-name").text(),
-                it.selectFirst("div.single-castItem-image").extractimg()
-            )
-        }
-        val tags = listOfNotNull(
-            doc.selectFirst("span.single-mevents-platforms-row-date")?.text(),
-            doc.selectFirst("div.our-rating > span.rating-span")?.text() ?: "No Review",
-            doc.selectFirst("img.single-mevents-platforms-row-image")?.attr("alt"),
-            doc.selectFirst("span.audiostring")?.text(),
-            dtsplit.getOrNull(1),
-            dtsplit.getOrNull(2),
-            dtsplit.getOrNull(3)
-        )
+    return)?.groupValues?.getOrNull(2)
+}
 
-        return newMovieLoadResponse(title, url, TvType.Movie, null) {
-            this.posterUrl = imageUrl
-            this.year = year
-            this.plot = plot
-            this.tags = tags
-            addActors(actors)
-            addTrailer(trailer)
-        }
+override suspend fun load(url: String): LoadResponse? {
+    val doc = app.get(url, cacheTime = 60).document
+
+    val title = doc.selectFirst("h1")?.text().orEmpty()
+    val dt = doc.select("div.single-mevents-meta").text()
+    val dtsplit = dt.split("|")
+    val imageUrl = doc.selectFirst("meta[property=og:image]")?.attr("content").orEmpty()
+    val trailer = doc.select("div.bng-section__content").getOrNull(1)
+        ?.selectFirst("a")?.attr("href").orEmpty()
+    val plot = doc.selectFirst("p")?.text().orEmpty()
+    val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
+
+    val actors = doc.select("div.single-castItem").mapNotNull {
+        val name = it.selectFirst("div.single-castItem-name")?.text() ?: return@mapNotNull null
+        val style = it.selectFirst("div.single-castItem-image")?.attr("style") ?: return@mapNotNull null
+        val img = style.extractimg() ?: return@mapNotNull null
+        Actor(name, img)
     }
 
+    val tags = listOfNotNull(
+        doc.selectFirst("span.single-mevents-platforms-row-date")?.text(),
+        doc.selectFirst("div.our-rating > span.rating-span")?.text() ?: "No Review",
+        doc.selectFirst("img.single-mevents-platforms-row-image")?.attr("alt"),
+        doc.selectFirst("span.audiostring")?.text(),
+        dtsplit.getOrNull(1)?.trim(),
+        dtsplit.getOrNull(2)?.trim(),
+        dtsplit.getOrNull(3)?.trim()
+    )
+
+    return newMovieLoadResponse(title, url, TvType.Movie, null) {
+        this.posterUrl = imageUrl
+        this.year = year
+        this.plot = plot
+        this.tags = tags
+        addActors(actors)
+        addTrailer(trailer)
+    }
+}
 
     companion object {
         fun String.encodeUri() = URLEncoder.encode(this, "utf8")
