@@ -168,7 +168,7 @@ override suspend fun load(url: String): LoadResponse? {
         this.year = year
         this.plot = plot
         this.tags = tags
-        addActors(actors)
+        this.actors = actor
         addTrailer(trailer)
     }
 }
