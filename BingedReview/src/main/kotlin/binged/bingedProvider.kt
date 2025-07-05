@@ -110,7 +110,11 @@ class BingedProvider : MainAPI() {
             }
         } ?: emptyList()
     }
-
+    
+    fun String.extractimg(): String? {
+    val regex = Regex("url\\((\"?)(.*?)\\1\\)")
+    return regex.find(this)?.groupValues?.get(2)
+    }
     override suspend fun load(url: String): LoadResponse? {
         val doc = app.get(url, cacheTime = 60).document
         val title = doc.selectFirst("h1")?.text().orEmpty()
@@ -121,7 +125,12 @@ class BingedProvider : MainAPI() {
             ?.selectFirst("a")?.attr("href").orEmpty()
         val plot = doc.selectFirst("p")?.text().orEmpty()
         val year = dtsplit.getOrNull(0)?.trim()?.toIntOrNull()
-
+        val actors = doc.select("div.single-castItem").mapNotNull{
+            Actor(
+                it.selectFirst("div.single-castItem-name").text(),
+                it.selectFirst("div.single-castItem-image").extractimg()
+            )
+        }
         val tags = listOfNotNull(
             doc.selectFirst("span.single-mevents-platforms-row-date")?.text(),
             doc.selectFirst("div.our-rating > span.rating-span")?.text() ?: "No Review",
@@ -137,6 +146,7 @@ class BingedProvider : MainAPI() {
             this.year = year
             this.plot = plot
             this.tags = tags
+            addActors(actors)
             addTrailer(trailer)
         }
     }
