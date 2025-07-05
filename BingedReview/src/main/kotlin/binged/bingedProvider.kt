@@ -131,7 +131,7 @@ override suspend fun load(url: String): LoadResponse? {
 
     val actors = doc.select("div.single-castItem").map {
     val name = it.selectFirst("div.single-castItem-name")?.text()
-    val imgelement = it.selectFirst("div.single-castItem-image")
+    val imgelement = it.selectFirst("div.single-castItem-image")?.outerHtml()
     val img = imgelement?.extractimg()
     if (name != null) {
         Actor(name, img)
