@@ -143,8 +143,9 @@ override suspend fun load(url: String): LoadResponse? {
     val name = it.selectFirst("div.single-castItem-name")?.text()
     val imgelement = it.selectFirst("div.single-castItem-image")
     val img = imgelement?.extractimg()
+    val type = it.selectFirst("div.single-castItem-type")?.text()
     if (name != null) {
-        Actor(name, img)
+        Actor(name, img,type)
     } else {
         null
     }
