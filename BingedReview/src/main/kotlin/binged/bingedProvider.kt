@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import java.net.URLEncoder
+import kotlinx.serialization.json.*
 
 class BingedProvider : MainAPI() {
     override var mainUrl = "https://www.binged.com"
@@ -111,11 +112,18 @@ class BingedProvider : MainAPI() {
             }
         } ?: emptyList()
     }
-    
-fun String.extractimg(): String? {
-    val regex = Regex("url\\((\"?)(.*?)\\1\\)")
-    return regex.find(this)?.groupValues?.getOrNull(2)
+
+fun Element.extractimg(): String? {
+    val dataBgRaw = this.attr("data-bg")
+    return try {
+        val jsonArray = Json.parseToJsonElement(dataBgRaw).jsonArray
+        val firstItem = jsonArray.firstOrNull() ?: return null
+        firstItem.jsonObject["url"]?.jsonPrimitive?.content
+    } catch (e: Exception) {
+        null
+    }
 }
+
 
 override suspend fun load(url: String): LoadResponse? {
     val doc = app.get(url, cacheTime = 60).document
@@ -131,7 +139,7 @@ override suspend fun load(url: String): LoadResponse? {
 
     val actors = doc.select("div.single-castItem").map {
     val name = it.selectFirst("div.single-castItem-name")?.text()
-    val imgelement = it.selectFirst("div.single-castItem-image")?.outerHtml()
+    val imgelement = it.selectFirst("div.single-castItem-image")
     val img = imgelement?.extractimg()
     if (name != null) {
         Actor(name, img)
