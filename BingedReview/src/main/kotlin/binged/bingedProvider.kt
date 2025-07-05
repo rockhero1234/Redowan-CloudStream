@@ -124,7 +124,7 @@ class BingedProvider : MainAPI() {
 
         val tags = listOfNotNull(
             doc.selectFirst("span.single-mevents-platforms-row-date")?.text(),
-            doc.selectFirst("span.rating-span")?.text(),
+            doc.selectFirst("div.our-rating > span.rating-span")?.text() ?: "No Review",
             doc.selectFirst("img.single-mevents-platforms-row-image")?.attr("alt"),
             doc.selectFirst("span.audiostring")?.text(),
             dtsplit.getOrNull(1),
