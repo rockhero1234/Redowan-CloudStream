@@ -81,7 +81,7 @@ subprojects {
         implementation(kotlin("stdlib")) // Adds Standard Kotlin Features
         implementation("com.github.Blatzar:NiceHttp:0.4.12") // HTTP Lib
         implementation("org.jsoup:jsoup:1.18.3") // HTML Parser
-        implementation("com.github.recloudstream.cloudstream:library-jvm:pre-release")
+       // implementation("com.github.recloudstream.cloudstream:library-jvm:pre-release")
     }
 }
 
