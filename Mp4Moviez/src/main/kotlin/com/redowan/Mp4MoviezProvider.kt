@@ -19,7 +19,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.nodes.Element
 
 class Mp4MoviezProvider : MainAPI() {
-    override var mainUrl = "https://www.mp4moviez.capital"
+    override var mainUrl = "https://www.mp4moviez.band"
     override var name = "Mp4Moviez"
     override var lang = "hi"
     override val hasMainPage = true
@@ -98,11 +98,12 @@ class Mp4MoviezProvider : MainAPI() {
         val links = doc.select("div[style=\"text-align:left;\"]")
         links.forEach { item ->
             val link = item.select("a").attr("href")
+            val tag = item.select("b").text() ?: ""
             if (!link.contains("links4mad.online")) {
                 callback.invoke(
                     newExtractorLink(
-                        "FastxMp4",
-                        "FastxMp4",
+                        "FastxMp4 $tag",
+                        "FastxMp4 $tag",
                         url = link,
                     ) {
                         quality = getVideoQuality(link)
